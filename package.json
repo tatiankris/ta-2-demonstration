@@ -7,6 +7,9 @@
     "start": "node index.js",
     "dev": "nodemon src/index.ts",
     "dev:memoize": "nodemon --exec ts-node src/Memoize/example.ts",
+    "dev:my-observable": "nodemon --exec ts-node src/Observable/examples/my-observable.ts",
+    "dev:my-interval": "nodemon --exec ts-node src/Observable/examples/interval-operator.ts",
+    "dev:my-from-of": "nodemon --exec ts-node src/Observable/examples/from-of-operators.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "tatiankris",
