@@ -1,5 +1,4 @@
 type VoidFunction = () => void
-const voidFunction: VoidFunction = () => {}
 
 type TSubscriber<T> = {
     next: (value: T) => void,
@@ -25,14 +24,22 @@ class SafeSubscriber<T> {
     complete() {
         if (!this.closed) {
             this.closed = true;
-            this._destination.complete();
+            if (this._destination.complete) {
+                this._destination.complete();
+                return
+            }
+            console.log("Complete")
         }
     }
 
     error(error) {
         if (!this.closed) {
             this.closed = true;
-            this._destination.error(error);
+            if (this._destination.error) {
+                this._destination.error(error);
+                return
+            }
+            console.log("Error:", error)
         }
     }
 }
@@ -51,14 +58,12 @@ class MyObservable<T> {
         if (typeof subscriber === "function") {
             this._subscribers.set(subscriberId, {
                 next: subscriber,
-                complete: voidFunction,
-                error: voidFunction
             })
         } else {
             this._subscribers.set(subscriberId, {
                 next: subscriber.next,
-                complete: subscriber.complete ?? voidFunction,
-                error: subscriber.error ?? voidFunction
+                complete: subscriber.complete,
+                error: subscriber.error
             })
         }
 

@@ -9,17 +9,14 @@ const myObservable = new MyObservable((subscriber) => {
 
     subscriber.next(1)
     subscriber.next(2)
-
-    subscriber.error("ERROR---")
-
     subscriber.complete()
-
+    subscriber.error("ERROR---")
     subscriber.next(3)
 })
 
 // myObservable.subscribe((v) => console.log("obsMY-0:", v))
 myObservable.subscribe({
     next: (v) => console.log("obsMy--1111", v),
-    complete: () => console.log("obsMy--1111--Complete"),
-    error: (error) => console.log(error)
+    // complete: () => console.log("obsMy--1111--Complete"),
+    // error: (error) => console.log(error)
 })
