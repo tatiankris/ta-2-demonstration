@@ -9,6 +9,34 @@ type TSubscriber<T> = {
 
 type TSubscriberFunction<T> = (subscriber: Required<TSubscriber<T>>) => VoidFunction | void
 
+class SafeSubscriber<T> {
+    closed = false;
+    private _destination: TSubscriber<T>
+    constructor(subscriber: TSubscriber<T>) {
+        this._destination = subscriber
+    }
+
+    next(value: T) {
+        if (!this.closed) {
+            this._destination.next(value);
+        }
+    }
+
+    complete() {
+        if (!this.closed) {
+            this.closed = true;
+            this._destination.complete();
+        }
+    }
+
+    error(error) {
+        if (!this.closed) {
+            this.closed = true;
+            this._destination.error(error);
+        }
+    }
+}
+
 class MyObservable<T> {
     private _subscribers = new Map()
     private _subscriberFunction: TSubscriberFunction<T>
@@ -34,7 +62,7 @@ class MyObservable<T> {
             })
         }
 
-        const activeSubscriber = this._subscribers.get(subscriberId)
+        const activeSubscriber = new SafeSubscriber(this._subscribers.get(subscriberId))
         const cleanUp  = this._subscriberFunction(activeSubscriber)
 
         return {
